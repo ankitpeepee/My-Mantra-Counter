@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ankit Mantra Counter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #FFFACD;
+      color: black;
+      text-align: center;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .screen { display: none; width: 100%; }
+    .active { display: block; }
+  
+    h2 { 
+        color: black; 
+        font-size: 2.2em;
+    }
+  
+    .btn {
+      display: block;
+      margin: 10px auto;
+      padding: 10px 25px;
+      font-size: 18px;
+      border: 2px solid #555;
+      border-radius: 8px;
+      background: lightblue;
+      color: black;
+      cursor: pointer;
+      width: 280px;
+    }
+    .btn small {
+      display: block;
+      font-size: 14px;
+      color: darkblue;
+      margin-top: 3px;
+    }
+    .btn:hover { background: #eee; }
+    .counter-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+    .circle-wrapper {
+      position: relative;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: black;
+      margin: 30px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background-image 0.3s ease;
+    }
+    .circle {
+      width: 174px;
+      height: 174px;
+      border-radius: 50%;
+      background-color: #FFFACD;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #countDisplay {
+      font-size: 72px;
+      color: black;
+      transition: color 0.3s ease;
+    }
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 50px;
+      margin: 20px 0 30px 0;
+    }
+    .control-btn {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: none;
+      font-size: 36px;
+      cursor: pointer;
+      background: black;
+      color: white;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .reset {
+      background: red;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      margin: 10px;
+      border-radius: 6px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .back {
+      background: lightgray;
+      color: black;
+      border: none;
+      padding: 10px 20px;
+      margin: 10px;
+      border-radius: 6px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    #mantraTitle {
+      color: black;
+      font-size: 25px;
+      margin: 15px 0;
+    }
+    #mantraText {
+      color: darkblue;
+      font-size: 8vw;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="menu" class="screen active">
+    <h2>🙏 बीज मंत्र चुनें 🙏</h2>
+
+    <button class="btn" onclick="openCounter('बुध बीज मंत्र','ॐ ब्रां ब्रीं ब्रौं सः बुधाय नमः')">
+      बुध बीज मंत्र
+      <small>(स्वास्थ्य, पाचन और बुद्धि)</small>
+    </button>
+
+    <button class="btn" onclick="openCounter('चंद्र बीज मंत्र','ॐ श्रां श्रीं श्रौं सः चंद्राय नमः')">
+      चंद्र बीज मंत्र
+      <small>(मन की शांति, भावनात्मक संतुलन)</small>
+    </button>
+
+    <button class="btn" onclick="openCounter('गुरु बीज मंत्र','ॐ ग्रां ग्रीं ग्रौं सः गुरुवे नमः')">
+      गुरु बीज मंत्र
+      <small>(धन, भाग्य और ज्ञान)</small>
+    </button>
+
+    <button class="btn" onclick="openCounter('राहु बीज मंत्र','ॐ भ्रां भ्रीं भ्रौं सः राहवे नमः')">
+      राहु बीज मंत्र
+      <small>(भटकाव से बचाव, सही निर्णय)</small>
+    </button>
+
+    <button class="btn" onclick="openCounter('शनि बीज मंत्र','ॐ प्रां प्रीं प्रौं सः शनैश्चराय नमः')">
+      शनि बीज मंत्र
+      <small>(मेहनत, स्थिरता, धैर्य और न्याय)</small>
+    </button>
+  </div>
+
+  <div id="counterPage" class="screen">
+    <div class="counter-container">
+      <h2 id="mantraTitle"></h2>
+      <p id="mantraText"></p>
+      <div class="circle-wrapper">
+        <div class="circle">
+          <span id="countDisplay">0</span>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="control-btn" onclick="decrease()">-</button>
+        <button class="control-btn" onclick="increase()">+</button>
+      </div>
+      <button class="reset" onclick="resetCount()">Reset</button>
+      <button class="back" onclick="goBack()">⬅ Back</button>
+    </div>
+  </div>
+
+  <script>
+    let count = 0;
+    const maxCount = 108;
+
+    function openCounter(title, text) {
+      document.getElementById('menu').classList.remove('active');
+      document.getElementById('counterPage').classList.add('active');
+      document.getElementById('mantraTitle').innerText = title;
+      document.getElementById('mantraText').innerText = text;
+      resetCount();
+    }
+  
+    function goBack() {
+      document.getElementById('counterPage').classList.remove('active');
+      document.getElementById('menu').classList.add('active');
+    }
+
+    function increase() {
+      if (count < maxCount) {
+        count++;
+        updateDisplay();
+      }
+    }
+
+    function decrease() {
+      if (count > 0) {
+        count--;
+        updateDisplay();
+      }
+    }
+
+    function resetCount() {
+      count = 0;
+      updateDisplay();
+    }
+
+    function updateDisplay() {
+      const display = document.getElementById('countDisplay');
+      const wrapper = document.querySelector('.circle-wrapper');
+      
+      display.innerText = count;
+
+      const percentage = (count / maxCount);
+      const angle = percentage * 360;
+      
+      wrapper.style.backgroundImage = `conic-gradient(limegreen 0%, limegreen ${angle}deg, black ${angle}deg, black 360deg)`;
+      display.style.color = 'black'; 
+
+      if (count === maxCount) {
+        if ("vibrate" in navigator) {
+          navigator.vibrate(1000);
+        }
+      }
+    }
+  </script>
+</body>
+</html>
